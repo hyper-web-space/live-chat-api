@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class LiveChatApiApplication
 
 fun main(args: Array<String>) {
-    runApplication<LiveChatApiApplication>(*args)
+  runApplication<LiveChatApiApplication>(*args)
 }
