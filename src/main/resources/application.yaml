@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      username: root
+      password: root
+      database: chat
+      authentication-database: admin
