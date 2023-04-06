@@ -29,6 +29,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.5.2")
 }
 
 tasks.withType<KotlinCompile> {
