@@ -6,11 +6,16 @@ plugins {
   kotlin("jvm") version "1.7.22"
   kotlin("plugin.spring") version "1.7.22"
   id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+  id("jacoco")
 }
 
 group = "chung.me"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
+
+jacoco {
+  toolVersion = "0.8.8"
+}
 
 repositories {
   mavenCentral()
@@ -35,4 +40,13 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
   useJUnitPlatform()
+}
+
+tasks {
+  jacocoTestReport {
+    reports {
+      xml.required.set(true)
+      html.required.set(true)
+    }
+  }
 }
