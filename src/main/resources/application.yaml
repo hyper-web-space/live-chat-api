@@ -6,3 +6,6 @@ spring:
       password: root
       database: chat
       authentication-database: admin
+  server:
+    secretKey: "614E645267556B58703272357538782F413F4428472B4B6250655368566D5971"
+

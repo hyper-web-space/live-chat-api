@@ -3,3 +3,5 @@ spring:
     mongodb:
       username: test
       password: test
+  server:
+    secretKey: "614E645267556B58703272357538782F413F4428472B4B6250655368566D5971"
