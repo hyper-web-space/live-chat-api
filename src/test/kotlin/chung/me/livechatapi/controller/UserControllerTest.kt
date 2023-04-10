@@ -1,6 +1,7 @@
 package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.SpringMvcMockTestSupport
+import chung.me.livechatapi.entity.User
 import chung.me.livechatapi.repos.RefreshTokenRepos
 import chung.me.livechatapi.repos.UserRepos
 import org.junit.jupiter.api.Assertions.*
@@ -30,6 +31,13 @@ class UserControllerTest(
     val savedToken = refreshTokenRepos.findByUserId("user1")?.token
     assertEquals(savedToken, refreshToken)
     assertNotNull(userRepos.findByUserId("user1"))
+  }
+
+  @Test
+  fun `회원 가입 아이디 중복 테스트`() {
+    userRepos.save(User("user1", "pass"))
+    val response = performPost("/users/signup", AuthBody("user1", "password123")).andReturn().response
+    assertEquals(response.status, HttpStatus.CONFLICT.value())
   }
 
   @Test
