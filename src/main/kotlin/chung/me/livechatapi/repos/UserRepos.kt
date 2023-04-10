@@ -4,4 +4,6 @@ import chung.me.livechatapi.entity.User
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface UserRepos : MongoRepository<User, ObjectId>
+interface UserRepos : MongoRepository<User, ObjectId> {
+  fun findByUserId(userId: String): User?
+}
