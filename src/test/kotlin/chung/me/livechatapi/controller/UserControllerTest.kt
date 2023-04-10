@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 class UserControllerTest(
   private val userRepos: UserRepos,
@@ -46,7 +48,9 @@ class UserControllerTest(
     val signupResponse = performPost("/users/signup", body).andReturn().response
     val firstRefreshToken = signupResponse.getHeader("REFRESH_TOKEN")
 
-    Thread.sleep(100)
+    val latch = CountDownLatch(1)
+    latch.await(500, TimeUnit.MILLISECONDS)
+
     val response = performPost("/users/signin", body).andReturn().response
     assertEquals(response.status, HttpStatus.OK.value())
     val (accessToken, refreshToken) = toResult<AuthenticationResponse>(response)
