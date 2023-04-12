@@ -65,4 +65,48 @@ class UserControllerTest(
     val response = performPost("/users/signin", AuthBody("user1", "password")).andReturn().response
     assertEquals(response.status, HttpStatus.UNAUTHORIZED.value())
   }
+
+  @Test
+  fun `refresh token 으로 access token 재생성 테스트`() {
+    performPost("/users/signup", AuthBody("user1", "password123")).andReturn().response
+    val (firstAccessToken, firstRefreshToken) = performPost(
+      "/users/signin",
+      AuthBody("user1", "password123")
+    ).andReturn().response.let {
+      toResult<AuthenticationResponse>(it)
+    }
+
+    val latch = CountDownLatch(1)
+    latch.await(500, TimeUnit.MILLISECONDS)
+
+    val response = performPost("/users/refresh", RefreshBody(firstRefreshToken!!)).andReturn().response
+    assertEquals(response.status, HttpStatus.OK.value())
+    val (accessToken, refreshToken) = toResult<AuthenticationResponse>(response)
+    assertNotNull(accessToken)
+    assertNotNull(refreshToken)
+    assertNotEquals(firstAccessToken, accessToken)
+    assertNotEquals(firstRefreshToken, refreshToken)
+    assertEquals(refreshTokenRepos.findByUserId("user1")?.token, refreshToken)
+  }
+
+  @Test
+  fun `존재하지 않는 refresh token 으로 access token 재생성 테스트`() {
+    val signupResponse = performPost("/users/signup", AuthBody("user1", "password123")).andReturn().response
+    val (firstAccessToken, firstRefreshToken) = performPost(
+      "/users/signin",
+      AuthBody("user1", "password123")
+    ).andReturn().response.let {
+      toResult<AuthenticationResponse>(it)
+    }
+
+    refreshTokenRepos.findByUserId("user1")?.let {
+      refreshTokenRepos.delete(it)
+    }
+
+    val latch = CountDownLatch(1)
+    latch.await(500, TimeUnit.MILLISECONDS)
+
+    val response = performPost("/users/refresh", RefreshBody(firstRefreshToken)).andReturn().response
+    assertEquals(response.status, HttpStatus.UNAUTHORIZED.value())
+  }
 }

@@ -17,7 +17,7 @@ class JwtService(
   @Value("\${spring.server.secretKey}") private val secretKey: String,
 ) {
 
-  fun extractLoginId(token: String): String {
+  fun extractUserId(token: String): String {
     return extractClaim(token, Claims::getSubject)
   }
 
@@ -50,7 +50,7 @@ class JwtService(
   }
 
   fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
-    val loginId = extractLoginId(token)
+    val loginId = extractUserId(token)
     return loginId == userDetails.username && !isTokenExpired(token)
   }
 

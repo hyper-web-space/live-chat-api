@@ -33,7 +33,7 @@ class SecurityConfig(
       .authorizeHttpRequests { auth ->
         auth
           .requestMatchers(
-            "/users/signup", "/users/signin"
+            "/users/signup", "/users/signin", "/users/refresh"
           ).permitAll()
           .requestMatchers(
             "/chats/**,/chartrooms/**"
