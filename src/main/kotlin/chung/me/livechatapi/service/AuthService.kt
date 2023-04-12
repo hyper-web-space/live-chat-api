@@ -31,10 +31,7 @@ class AuthService(
   }
 
   fun signin(userId: String, password: String): AuthenticationResponse {
-    val user = userRepos.findByUserId(userId) ?: throw ResponseStatusException(
-      HttpStatus.BAD_REQUEST,
-      "user ID is not exists. : $userId"
-    )
+    val user = findUser(userId)
 
     val matches = passwordEncoder.matches(password, user.password)
 
@@ -53,6 +50,30 @@ class AuthService(
       refreshToken.token = newRefreshToken
       refreshTokenRepos.save(refreshToken)
     }
+
+    return AuthenticationResponse(newAccessToken, newRefreshToken)
+  }
+
+  private fun findUser(userId: String): User {
+    return userRepos.findByUserId(userId) ?: throw ResponseStatusException(
+      HttpStatus.BAD_REQUEST,
+      "user ID is not exists. : $userId"
+    )
+  }
+
+  fun refresh(token: String): AuthenticationResponse {
+    val userId = jwtService.extractUserId(token)
+    val refreshToken = refreshTokenRepos.findByUserId(userId) ?: throw ResponseStatusException(
+      HttpStatus.UNAUTHORIZED,
+      "refreshToken expired"
+    )
+
+    val user = findUser(userId)
+
+    val newAccessToken = jwtService.generateAccessToken(user)
+    val newRefreshToken = jwtService.generateRefreshToken(user)
+    refreshToken.updateToken(newRefreshToken)
+    refreshTokenRepos.save(refreshToken)
 
     return AuthenticationResponse(newAccessToken, newRefreshToken)
   }

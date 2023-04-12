@@ -2,6 +2,7 @@ package chung.me.livechatapi.entity
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Encrypted
@@ -19,4 +20,12 @@ class RefreshToken(
   @Indexed(expireAfterSeconds = 604800)
   @CreatedDate
   lateinit var createdAt: LocalDateTime
+
+  @LastModifiedDate
+  lateinit var updatedAt: LocalDateTime
+
+  fun updateToken(token: String) {
+    this.token = token
+    updatedAt = LocalDateTime.now()
+  }
 }

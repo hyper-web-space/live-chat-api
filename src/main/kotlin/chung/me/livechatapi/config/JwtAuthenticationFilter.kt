@@ -32,7 +32,7 @@ class JwtAuthenticationFilter(
     }
 
     val jwt = authHeader.substringAfter(BEARER_PREFIX)
-    val loginId = jwtService.extractLoginId(jwt)
+    val loginId = jwtService.extractUserId(jwt)
     request.setAttribute("loginId", loginId)
 
     if (SecurityContextHolder.getContext().authentication == null) {

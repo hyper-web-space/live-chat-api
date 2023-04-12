@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
+const val ACCESS_TOKEN = "ACCESS_TOKEN"
+const val REFRESH_TOKEN = "REFRESH_TOKEN"
+
 @RestController
 @RequestMapping("/users")
 class UserController(
@@ -34,6 +37,13 @@ class UserController(
     val authenticationResponse = authService.signin(userId, password)
     return ResponseEntity.ok().body(authenticationResponse)
   }
+
+  @PostMapping("refresh")
+  fun refresh(
+    @RequestBody body: RefreshBody,
+  ): ResponseEntity<AuthenticationResponse> {
+    return ResponseEntity.ok().body(authService.refresh(body.refreshToken))
+  }
 }
 
 data class AuthBody(
@@ -43,5 +53,9 @@ data class AuthBody(
 
 data class AuthenticationResponse(
   val accessToken: String,
+  val refreshToken: String,
+)
+
+data class RefreshBody(
   val refreshToken: String,
 )
