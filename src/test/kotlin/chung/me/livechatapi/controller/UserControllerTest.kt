@@ -26,12 +26,6 @@ class UserControllerTest(
   fun `회원 가입 테스트`() {
     val response = performPost("/users/signup", AuthBody("user1", "password123")).andReturn().response
     assertEquals(response.status, HttpStatus.CREATED.value())
-
-    assertNotNull(response.getHeader("ACCESS_TOKEN"))
-    val refreshToken = response.getHeader("REFRESH_TOKEN")
-    assertNotNull(refreshToken)
-    val savedToken = refreshTokenRepos.findByUserId("user1")?.token
-    assertEquals(savedToken, refreshToken)
     assertNotNull(userRepos.findByUserId("user1"))
   }
 
@@ -46,7 +40,6 @@ class UserControllerTest(
   fun `회원가입 후 로그인 테스트`() {
     val body = AuthBody("user1", "password123")
     val signupResponse = performPost("/users/signup", body).andReturn().response
-    val firstRefreshToken = signupResponse.getHeader("REFRESH_TOKEN")
 
     val latch = CountDownLatch(1)
     latch.await(500, TimeUnit.MILLISECONDS)
@@ -56,7 +49,6 @@ class UserControllerTest(
     val (accessToken, refreshToken) = toResult<AuthenticationResponse>(response)
     assertNotNull(accessToken)
     assertNotNull(refreshToken)
-    assertNotEquals(firstRefreshToken, refreshToken)
     assertEquals(refreshTokenRepos.findByUserId("user1")?.token, refreshToken)
   }
 

@@ -19,7 +19,7 @@ class AuthService(
   private val refreshTokenRepos: RefreshTokenRepos,
 ) {
 
-  fun register(userId: String, password: String): AuthenticationResponse {
+  fun register(userId: String, password: String) {
     val existUser = userRepos.findByUserId(userId)
 
     if (existUser != null) {
@@ -27,13 +27,7 @@ class AuthService(
     }
 
     val encodedPassword = passwordEncoder.encode(password)
-    val newUser = userRepos.save(User(userId, encodedPassword))
-    val accessToken = jwtService.generateAccessToken(newUser)
-    val refreshToken = jwtService.generateRefreshToken(newUser)
-
-    refreshTokenRepos.save(RefreshToken(userId, refreshToken))
-
-    return AuthenticationResponse(accessToken, refreshToken)
+    userRepos.save(User(userId, encodedPassword))
   }
 
   fun signin(userId: String, password: String): AuthenticationResponse {
