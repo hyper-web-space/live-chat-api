@@ -23,9 +23,7 @@ class UserController(
     response: HttpServletResponse,
   ) {
     val (userId, password) = body
-    val (accessToken, refreshToken) = authService.register(userId, password)
-    response.setHeader("ACCESS_TOKEN", accessToken)
-    response.setHeader("REFRESH_TOKEN", refreshToken)
+    authService.register(userId, password)
   }
 
   @PostMapping("signin")
