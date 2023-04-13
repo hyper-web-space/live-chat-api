@@ -35,7 +35,6 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
-      - cmd: buildx create --use
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@4
