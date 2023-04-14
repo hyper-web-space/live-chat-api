@@ -8,7 +8,7 @@ env:
 
 on:
   push:
-    branches: [ 5-docker-image ]
+    branches: [ main ]
 
 jobs:
   build:
