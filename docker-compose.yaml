@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   api:
-    image: live-chat-api
+    image: ghcr.io/hyper-web-space/live-chat-api
     ports:
       - "8080:8080"
     environment:
