@@ -27,6 +27,8 @@ jobs:
           fail_ci_if_error: true
   codeball_job:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     name: Codeball
     steps:
       - name: Codeball
