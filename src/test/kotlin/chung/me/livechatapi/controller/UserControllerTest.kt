@@ -104,7 +104,7 @@ class UserControllerTest(
     }
 
     val latch = CountDownLatch(1)
-    latch.await(500, TimeUnit.MILLISECONDS)
+    latch.await(1, TimeUnit.SECONDS)
 
     val response = performPost("/users/refresh", RefreshBody(firstRefreshToken)).andReturn().response
     assertEquals(response.status, HttpStatus.UNAUTHORIZED.value())
