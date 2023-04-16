@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 
 @Document
 class ChatRoom(
-  var name: String,
-  var creator: String,
-  var participants: List<String>,
+  val name: String,
+  val creator: String,
+  val password: String? = null,
 ) {
   @MongoId
   lateinit var id: ObjectId
@@ -18,5 +18,6 @@ class ChatRoom(
   @CreatedDate
   lateinit var createdAt: LocalDateTime
 
-  var privateRoom: Boolean = false
+  var privateRoom: Boolean = password != null
+  var participants: List<String> = emptyList()
 }
