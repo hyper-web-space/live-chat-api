@@ -79,7 +79,7 @@ class UserControllerTest(
     val latch = CountDownLatch(1)
     latch.await(500, TimeUnit.MILLISECONDS)
 
-    val response = performPost("/users/refresh", RefreshBody(firstRefreshToken!!)).andReturn().response
+    val response = performPost("/users/refresh", RefreshBody(firstRefreshToken)).andReturn().response
     assertEquals(response.status, HttpStatus.OK.value())
     val (accessToken, refreshToken) = toResult<AuthenticationResponse>(response)
     assertNotNull(accessToken)

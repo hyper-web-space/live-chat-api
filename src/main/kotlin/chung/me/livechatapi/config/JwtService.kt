@@ -50,8 +50,8 @@ class JwtService(
   }
 
   fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
-    val loginId = extractUserId(token)
-    return loginId == userDetails.username && !isTokenExpired(token)
+    val userId = extractUserId(token)
+    return userId == userDetails.username && !isTokenExpired(token)
   }
 
   private fun isTokenExpired(token: String): Boolean {
