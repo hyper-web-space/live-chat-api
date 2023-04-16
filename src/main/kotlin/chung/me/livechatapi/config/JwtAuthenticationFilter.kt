@@ -2,6 +2,7 @@ package chung.me.livechatapi.config
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequestWrapper
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -10,8 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import java.util.*
 
 private const val BEARER_PREFIX = "Bearer "
+const val USER_ID = "USER_ID"
 
 @Component
 class JwtAuthenticationFilter(
@@ -32,11 +35,20 @@ class JwtAuthenticationFilter(
     }
 
     val jwt = authHeader.substringAfter(BEARER_PREFIX)
-    val loginId = jwtService.extractUserId(jwt)
-    request.setAttribute("loginId", loginId)
+    val userId = jwtService.extractUserId(jwt)
+
+    val wrapper = object : HttpServletRequestWrapper(request) {
+      override fun getHeaders(name: String?): Enumeration<String> {
+        return if (name == USER_ID) {
+          Collections.enumeration(listOf(userId))
+        } else {
+          super.getHeaders(name)
+        }
+      }
+    }
 
     if (SecurityContextHolder.getContext().authentication == null) {
-      val userDetails = userDetailsService.loadUserByUsername(loginId)
+      val userDetails = userDetailsService.loadUserByUsername(userId)
       if (jwtService.isTokenValid(jwt, userDetails)) {
         SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
           userDetails,
@@ -48,6 +60,6 @@ class JwtAuthenticationFilter(
       }
     }
 
-    filterChain.doFilter(request, response)
+    filterChain.doFilter(wrapper, response)
   }
 }
