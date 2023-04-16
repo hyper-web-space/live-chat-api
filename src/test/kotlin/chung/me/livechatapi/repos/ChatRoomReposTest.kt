@@ -17,17 +17,18 @@ class ChatRoomReposTest(
 
   @Test
   fun testSave() {
-    val chatRoom = ChatRoom("chatRoom", "user1", listOf("user1"))
+    val chatRoom = ChatRoom("chatRoom", "user1")
     val now = LocalDateTime.now()
     val savedChatRoom = chatRoomRepos.save(chatRoom)
 
     assertThat(savedChatRoom.id).isEqualTo(chatRoom.id)
     assertThat(savedChatRoom.createdAt).isAfter(now)
+    assertThat(savedChatRoom.creator).isEqualTo(chatRoom.creator)
   }
 
   @Test
   fun testFindById() {
-    val chatRoom = ChatRoom("chatRoom", "user1", listOf("user1"))
+    val chatRoom = ChatRoom("chatRoom", "user1")
     chatRoomRepos.save(chatRoom)
     val chatRoomOptional = chatRoomRepos.findById(chatRoom.id)
     assertThat(chatRoomOptional.isPresent).isTrue()
