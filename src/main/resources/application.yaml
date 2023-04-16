@@ -1,10 +1,15 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URL:mongodb://localhost:27017}
       username: ${MONGODB_USERNAME:root}
       password: ${MONGODB_PASSWORD:root}
       database: chat
       authentication-database: admin
+      host: ${MONGODB_HOST:localhost}
+      port: ${MONGODB_PORT:27017}
   server:
     secretKey: ${SECRET_KEY:"614E645267556B58703272357538782F413F4428472B4B6250655368566D5971"}
+springdoc:
+  enable-data-rest: false
+  enable-groovy: false
+  enable-hateoas: false
