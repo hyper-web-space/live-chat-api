@@ -36,4 +36,14 @@ class ChatRoomService(
       )
     }
   }
+
+  fun getConnectedChatRooms(offset: Int, limit: Int, userId: String): ChatRoomPageResponse {
+    val pageable = PageRequest.of(offset, limit, Sort.by("createdAt").descending())
+    return repos.findByParticipantsContaining(userId, pageable).let {
+      ChatRoomPageResponse(
+        it.content.map(ChatRoomResponse::fromChatRoom),
+        it.totalElements
+      )
+    }
+  }
 }

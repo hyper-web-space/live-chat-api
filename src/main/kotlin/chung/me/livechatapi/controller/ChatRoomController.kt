@@ -84,6 +84,37 @@ class ChatRoomController(
   ): ResponseEntity<ChatRoomPageResponse> {
     return ResponseEntity.ok(service.getChatRooms(offset, limit, name))
   }
+
+  @Operation(
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "조회 성공",
+        content = [
+          Content(schema = Schema(implementation = ChatRoomPageResponse::class), mediaType = "application/json")
+        ]
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "AUTHORIZATION 헤더가 없거나, 유효하지 않은 토큰",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
+    ],
+    description = "참가 중인 채팅방 조회"
+  )
+  @GetMapping("connected")
+  fun getConnectedChatRooms(
+    @RequestParam offset: Int,
+    @RequestParam limit: Int,
+    @RequestHeader(USER_ID) userId: String,
+  ): ResponseEntity<ChatRoomPageResponse> {
+    return ResponseEntity.ok(service.getConnectedChatRooms(offset, limit, userId))
+  }
 }
 
 data class CreationChatRoomBody(
