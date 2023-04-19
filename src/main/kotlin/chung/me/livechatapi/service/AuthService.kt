@@ -20,6 +20,9 @@ class AuthService(
 ) {
 
   fun register(userId: String, password: String) {
+    require(userId.isNotBlank()) { "userId is blank" }
+    require(password.isNotBlank()) { "password is blank" }
+
     val existUser = userRepos.findByUserId(userId)
 
     if (existUser != null) {
@@ -31,6 +34,9 @@ class AuthService(
   }
 
   fun signin(userId: String, password: String): AuthenticationResponse {
+    require(userId.isNotBlank()) { "userId is blank" }
+    require(password.isNotBlank()) { "password is blank" }
+
     val user = findUser(userId)
 
     val matches = passwordEncoder.matches(password, user.password)
