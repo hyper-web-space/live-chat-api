@@ -19,5 +19,5 @@ class ChatRoom(
   lateinit var createdAt: LocalDateTime
 
   var privateRoom: Boolean = password != null
-  var participants: List<String> = listOf(creator)
+  var participants: MutableSet<String> = mutableSetOf(creator)
 }
