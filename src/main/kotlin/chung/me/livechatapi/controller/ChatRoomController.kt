@@ -2,19 +2,14 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.config.USER_ID
 import chung.me.livechatapi.entity.ChatRoom
+import chung.me.livechatapi.entity.Message
 import chung.me.livechatapi.service.ChatRoomService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
 @RestController
@@ -115,6 +110,48 @@ class ChatRoomController(
   ): ResponseEntity<ChatRoomPageResponse> {
     return ResponseEntity.ok(service.getConnectedChatRooms(offset, limit, userId))
   }
+
+  @Operation(
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "입장 성공",
+        content = [
+          Content(schema = Schema(implementation = ChatRoomResponse::class), mediaType = "application/json")
+        ]
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "이미 입장했거나, 채팅방이 존재하지 않거나, 비밀번호가 틀림",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "AUTHORIZATION 헤더가 없거나, 유효하지 않은 토큰",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
+    ],
+    description = "채팅방 입장"
+  )
+  @PostMapping("{chatRoomId}")
+  fun joinChatRoom(
+    @RequestHeader(USER_ID) userId: String,
+    @PathVariable chatRoomId: String,
+    @RequestBody body: JoinChatRoomBody,
+  ): ResponseEntity<List<ChatData>> {
+    val (password) = body
+    return ResponseEntity.ok(service.joinChatRoom(chatRoomId, password, userId))
+  }
 }
 
 data class CreationChatRoomBody(
@@ -160,5 +197,21 @@ data class ChatRoomResponse(
       chatRoom.createdAt,
       chatRoom.participants.count(),
     )
+  }
+}
+
+data class JoinChatRoomBody(
+  val password: String? = null,
+)
+
+data class ChatData(
+  val sender: String,
+  val contents: String,
+  val messageTimestamp: LocalDateTime,
+) {
+  companion object {
+    fun fromMessage(message: Message): ChatData {
+      return ChatData(message.sender, message.content, message.createdAt)
+    }
   }
 }

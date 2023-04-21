@@ -2,13 +2,19 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.SpringMvcMockTestSupport
 import chung.me.livechatapi.entity.ChatRoom
+import chung.me.livechatapi.entity.Message
 import chung.me.livechatapi.repos.ChatRoomRepos
+import chung.me.livechatapi.repos.MessageRepos
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.tuple
+import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.test.context.support.WithAnonymousUser
 import org.springframework.security.test.context.support.WithMockUser
 import java.util.concurrent.CountDownLatch
@@ -16,11 +22,14 @@ import java.util.concurrent.TimeUnit
 
 class ChatRoomControllerTest(
   private val chatRoomRepos: ChatRoomRepos,
+  private val messageRepos: MessageRepos,
+  private val passwordEncoder: PasswordEncoder,
 ) : SpringMvcMockTestSupport() {
 
   @BeforeEach
   fun setUp() {
     chatRoomRepos.deleteAll()
+    messageRepos.deleteAll()
   }
 
   @WithMockUser(username = "user1", roles = ["MEMBER"])
@@ -128,5 +137,126 @@ class ChatRoomControllerTest(
           "chat4",
         )
     })
+  }
+
+  @WithMockUser(username = "user3", roles = ["MEMBER"])
+  @Test
+  fun `채팅방 입장 테스트`() {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", null))
+    val roomId = chatRoom.id
+    messageRepos.saveAll(
+      listOf(
+        Message(roomId, "user1", "message1"),
+        Message(roomId, "user2", "message2"),
+        Message(roomId, "user1", "message3"),
+        Message(roomId, "user2", "message4"),
+        Message(roomId, "user1", "message5"),
+      )
+    )
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody()).andReturn().response
+    assertEquals(response.status, 200)
+    val joinChatRoomResponse = toResult<List<ChatData>>(response)
+    assertThat(joinChatRoomResponse)
+      .extracting("sender", "contents")
+      .containsExactlyInAnyOrder(
+        tuple("user1", "message1"),
+        tuple("user2", "message2"),
+        tuple("user1", "message3"),
+        tuple("user2", "message4"),
+        tuple("user1", "message5"),
+      )
+  }
+
+  @WithMockUser(username = "user1", roles = ["MEMBER"])
+  @Test
+  fun `이미 입장된 채팅방 입장 테스트`() {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", null))
+    val roomId = chatRoom.id
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody()).andReturn().response
+    assertEquals(response.status, 400)
+    val errorResponse = toResult<ResponseErrorEntity>(response)
+    val code = HttpStatus.BAD_REQUEST.toString()
+    assertThat(errorResponse)
+      .isEqualTo(ResponseErrorEntity(code, "Already joined"))
+  }
+
+  @WithMockUser(username = "user3", roles = ["MEMBER"])
+  @Test
+  fun `비공개 채팅방 입장 테스트`() {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", passwordEncoder.encode("1234")))
+    val roomId = chatRoom.id
+    messageRepos.saveAll(
+      listOf(
+        Message(roomId, "user1", "message1"),
+        Message(roomId, "user2", "message2"),
+        Message(roomId, "user1", "message3"),
+        Message(roomId, "user2", "message4"),
+        Message(roomId, "user1", "message5"),
+      )
+    )
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody("1234")).andReturn().response
+    assertEquals(response.status, 200)
+    val joinChatRoomResponse = toResult<List<ChatData>>(response)
+    assertThat(joinChatRoomResponse)
+      .extracting("sender", "contents")
+      .containsExactlyInAnyOrder(
+        tuple("user1", "message1"),
+        tuple("user2", "message2"),
+        tuple("user1", "message3"),
+        tuple("user2", "message4"),
+        tuple("user1", "message5"),
+      )
+  }
+
+  @WithMockUser(username = "user3", roles = ["MEMBER"])
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      ",",
+      "'   ',"
+    ]
+  )
+  fun `빈 암호로 비공개 채팅방 입장 테스트`(password: String?) {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", passwordEncoder.encode("1234")))
+    val roomId = chatRoom.id
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody(password)).andReturn().response
+    assertEquals(response.status, 400)
+    val errorResponse = toResult<ResponseErrorEntity>(response)
+    val code = HttpStatus.BAD_REQUEST.toString()
+    assertThat(errorResponse)
+      .isEqualTo(ResponseErrorEntity(code, "Password is required"))
+  }
+
+  @WithMockUser(username = "user3", roles = ["MEMBER"])
+  @ParameterizedTest
+  @CsvSource(
+    value = [
+      "password",
+      "1234",
+      "Pass1234",
+      "PASS1234",
+    ]
+  )
+  fun `틀린 암호로 비공개 채팅방 입장 테스트`(password: String?) {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", passwordEncoder.encode("pass1234")))
+    val roomId = chatRoom.id
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody(password)).andReturn().response
+    assertEquals(response.status, 400)
+    val errorResponse = toResult<ResponseErrorEntity>(response)
+    val code = HttpStatus.BAD_REQUEST.toString()
+    assertThat(errorResponse)
+      .isEqualTo(ResponseErrorEntity(code, "Wrong password"))
+  }
+
+  @WithMockUser(username = "user3", roles = ["MEMBER"])
+  @Test
+  fun `존재하지 않는 채팅방 입장 테스트`() {
+    val roomId = "64429dd3e31ecb7d2ef092e2"
+    val response = performPost("/chatrooms/$roomId", JoinChatRoomBody()).andReturn().response
+    assertEquals(response.status, 400)
+    val errorResponse = toResult<ResponseErrorEntity>(response)
+    val code = HttpStatus.BAD_REQUEST.toString()
+    assertThat(errorResponse)
+      .isEqualTo(ResponseErrorEntity(code, "Chat room not found"))
   }
 }

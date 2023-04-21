@@ -18,7 +18,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
       logger.info("", e)
     }
 
-    val errorResponse = ResponseErrorEntity(e.statusCode.toString(), e.message)
+    val errorResponse = ResponseErrorEntity(e.statusCode.toString(), e.reason)
 
     return ResponseEntity
       .status(e.statusCode)
