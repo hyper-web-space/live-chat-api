@@ -29,10 +29,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.springframework.boot:spring-boot-starter-websocket")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.5.2")
   implementation("io.jsonwebtoken:jjwt-api:0.11.5")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
   implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
@@ -41,6 +39,10 @@ dependencies {
   implementation("org.springdoc:springdoc-openapi-starter-common:2.0.2")
   implementation("org.springdoc:springdoc-openapi-security:1.6.14")
   implementation("org.apache.commons:commons-lang3:3.12.0")
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.security:spring-security-test")
+  testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.5.2")
+  testImplementation("it.ozimov:embedded-redis:0.7.2")
 }
 
 tasks.withType<KotlinCompile> {

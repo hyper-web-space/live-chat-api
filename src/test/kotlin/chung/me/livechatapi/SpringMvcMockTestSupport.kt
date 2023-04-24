@@ -1,11 +1,13 @@
 package chung.me.livechatapi
 
+import chung.me.livechatapi.config.EmbeddedRedisConfiguration
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.TestConstructor
@@ -23,6 +25,7 @@ import java.net.URI
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @AutoConfigureMockMvc
+@Import(EmbeddedRedisConfiguration::class)
 abstract class SpringMvcMockTestSupport {
 
   @Autowired
