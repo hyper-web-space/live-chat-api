@@ -23,8 +23,10 @@ repositories {
 }
 
 dependencies {
+  implementation("org.springframework.boot:spring-boot-starter-parent:3.0.5")
   implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  implementation("io.projectreactor.netty:reactor-netty-http:1.1.6")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

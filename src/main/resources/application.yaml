@@ -10,8 +10,6 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      client-name: ${REDIS_CLIENT_NAME:chat}
-      password: ${REDIS_PASSWORD:password
   server:
     secretKey: ${SECRET_KEY:"614E645267556B58703272357538782F413F4428472B4B6250655368566D5971"}
 springdoc:
