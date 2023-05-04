@@ -19,7 +19,7 @@ class User(
 
   @CreatedDate
   lateinit var createdAt: LocalDateTime
-  var role: Role = Role.MEMBER
+  private var role: Role = Role.MEMBER
   override fun getAuthorities(): List<GrantedAuthority> {
     return listOf(SimpleGrantedAuthority(role.name))
   }

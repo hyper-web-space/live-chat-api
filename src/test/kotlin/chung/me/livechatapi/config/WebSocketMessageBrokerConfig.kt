@@ -1,13 +1,13 @@
 package chung.me.livechatapi.config
 
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.messaging.simp.config.ChannelRegistration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 
-@Configuration
+@TestConfiguration
 @EnableWebSocketMessageBroker
 class WebSocketMessageBrokerConfig(
   private val authChannelInterceptorAdaptor: AuthChannelInterceptorAdaptor,
@@ -22,6 +22,7 @@ class WebSocketMessageBrokerConfig(
   override fun registerStompEndpoints(registry: StompEndpointRegistry) {
     registry.addEndpoint("/ws")
       .setAllowedOriginPatterns("*")
+      .withSockJS()
   }
 
   override fun configureClientInboundChannel(registration: ChannelRegistration) {
