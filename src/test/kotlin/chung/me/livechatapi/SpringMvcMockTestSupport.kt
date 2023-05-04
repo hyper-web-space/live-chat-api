@@ -1,12 +1,14 @@
 package chung.me.livechatapi
 
 import chung.me.livechatapi.config.EmbeddedRedisConfiguration
+import chung.me.livechatapi.config.WebSocketMessageBrokerConfig
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpServletResponse
@@ -25,7 +27,7 @@ import java.net.URI
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @AutoConfigureMockMvc
-@Import(EmbeddedRedisConfiguration::class)
+@Import(EmbeddedRedisConfiguration::class, WebSocketMessageBrokerConfig::class)
 abstract class SpringMvcMockTestSupport {
 
   @Autowired
@@ -33,6 +35,9 @@ abstract class SpringMvcMockTestSupport {
 
   @Autowired
   lateinit var objectMapper: ObjectMapper
+
+  @LocalServerPort
+  protected val port = 0
 
   fun parseJson(value: Any): String {
     return objectMapper.writeValueAsString(value)
