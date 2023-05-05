@@ -1,7 +1,6 @@
 package chung.me.livechatapi.config
 
 import chung.me.livechatapi.entity.Role
-import chung.me.livechatapi.repos.UserRepos
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -22,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfig(
   private val jwtAuthFilter: JwtAuthenticationFilter,
-  private val userRepos: UserRepos,
   private val userDetailsService: UserDetailsService,
 ) {
 
@@ -33,10 +31,10 @@ class SecurityConfig(
       .authorizeHttpRequests { auth ->
         auth
           .requestMatchers(
-            "/swagger-ui/**", "/v3/api-docs/**", "/users/signup", "/users/signin", "/users/refresh"
+            "/swagger-ui/**", "/v3/api-docs/**", "/users/signup", "/users/signin", "/users/refresh", "/ws/**"
           ).permitAll()
           .requestMatchers(
-            "/chats/**,/chartrooms/**"
+            "/chats/**", "/chartrooms/**"
           ).hasAuthority(Role.MEMBER.name)
           .anyRequest()
           .authenticated()
