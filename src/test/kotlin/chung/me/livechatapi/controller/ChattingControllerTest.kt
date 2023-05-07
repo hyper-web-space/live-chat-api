@@ -2,7 +2,9 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.SpringMvcMockTestSupport
 import chung.me.livechatapi.config.JwtService
+import chung.me.livechatapi.entity.ChatRoom
 import chung.me.livechatapi.entity.User
+import chung.me.livechatapi.repos.ChatRoomRepos
 import chung.me.livechatapi.repos.UserRepos
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -33,11 +35,13 @@ import kotlin.reflect.KClass
 class ChattingControllerTest(
   private val jwtService: JwtService,
   private val userRepos: UserRepos,
+  private val chatRoomRepos: ChatRoomRepos,
 ) : SpringMvcMockTestSupport() {
 
   @BeforeEach
   fun setUp() {
     userRepos.deleteAll()
+    chatRoomRepos.deleteAll()
   }
 
   @Test
@@ -45,6 +49,9 @@ class ChattingControllerTest(
     val webSocketClient = getWebSocketClient()
     val user1Id = "user1"
     val user2Id = "user2"
+
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", user1Id))
+    val chatRoomId = chatRoom.id
     userRepos.saveAll(listOf(User(user1Id, ""), User(user2Id, "")))
 
     val session1 = getStompSession(webSocketClient, user1Id)
@@ -54,12 +61,12 @@ class ChattingControllerTest(
     val room1Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
     val room2Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
 
-    session1.subscribe("/chat/room1", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
-    session2.subscribe("/chat/room1", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
+    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
+    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
     anotherSession.subscribe("/chat/room2", MessageFrameHandler(ChatData::class, room2Queue, jwtService))
 
     val chatData = ChatData(user1Id, "hello", LocalDateTime.now())
-    session1.send("/queue/message/room1", chatData)
+    session1.send("/queue/message/$chatRoomId", chatData)
 
     val chatData1 = room1Queue.poll(100, TimeUnit.MILLISECONDS)
     val chatData2 = room1Queue.poll(100, TimeUnit.MILLISECONDS)
@@ -68,6 +75,32 @@ class ChattingControllerTest(
     assertEquals(chatData, chatData1)
     assertEquals(chatData, chatData2)
     assertNull(chatData3)
+  }
+
+  @Test
+  fun `닫힌 채팅 방에 메시지 전송 테스트`() {
+    val webSocketClient = getWebSocketClient()
+    val user1Id = "user1"
+    val user2Id = "user2"
+
+    val chatRoom = ChatRoom("room1", user1Id).apply { participants.remove(user1Id) }
+    chatRoomRepos.save(chatRoom)
+    val chatRoomId = chatRoom.id
+    userRepos.saveAll(listOf(User(user1Id, ""), User(user2Id, "")))
+
+    val session1 = getStompSession(webSocketClient, user1Id)
+    val session2 = getStompSession(webSocketClient, user2Id)
+
+    val room1Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
+
+    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
+    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
+
+    val chatData = ChatData(user1Id, "hello", LocalDateTime.now())
+
+    session1.send("/queue/message/$chatRoomId", chatData)
+    val chatDataResponse = room1Queue.poll(100, TimeUnit.MILLISECONDS)
+    assertNull(chatDataResponse)
   }
 
   @Test
