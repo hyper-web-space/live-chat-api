@@ -82,4 +82,11 @@ class ChatRoomService(
       ChatData.fromMessage(it)
     }
   }
+
+  fun isRoomClosed(roomId: String): Boolean {
+    val objectId = ObjectId(roomId)
+    val creator = repos.findCreatorById(objectId)?.creator
+    checkNotNull(creator)
+    return repos.isRoomClosed(objectId, creator)
+  }
 }
