@@ -16,3 +16,10 @@ springdoc:
   enable-data-rest: false
   enable-groovy: false
   enable-hateoas: false
+---
+spring:
+  config:
+    activate:
+      on-profile: 8081
+server:
+  port: 8081
