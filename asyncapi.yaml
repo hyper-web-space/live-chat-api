@@ -1,0 +1,54 @@
+asyncapi: '2.6.0'
+info:
+  title: Streetlights Kafka API
+  version: '1.0.0'
+  description: |
+    메시지 전송을 위한 WebSocket STOMP 명세
+
+    연결시 Authorization 헤더에 jwt 토큰을 추가해야 한다.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  api:
+    url: ws://localhost:8080/ws
+    protocol: ws
+defaultContentType: application/json
+channels:
+  /queue/message/$chatRoomId:
+    publish:
+      summary: 메시지 발신
+      operationId: sendMessage
+      message:
+        $ref: '#/components/messages/chatData'
+  /chat/$chatRoomId:
+    subscribe:
+      summary: 메시지 수신
+      operationId: receiveMessage
+      message:
+        $ref: '#/components/messages/chatData'
+components:
+  messages:
+    chatData:
+      title: 채팅 데이터
+      summary: 채팅 데이터에 대한 정보
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/chatDataPayload"
+  schemas:
+    chatDataPayload:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: 전송자 ID
+          example: "user123"
+        contents:
+          type: string
+          description: 채팅 내용
+          example: "hi~"
+        messageTimestamp:
+          type: string
+          description: 채팅 입력 시간
+          format: yyyy-MM-dd HH:mm:ss.SSS
+          example: "2023-05-10 23:11:00.000"
