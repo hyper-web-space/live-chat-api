@@ -1,6 +1,7 @@
 package chung.me.livechatapi.config
 
 import chung.me.livechatapi.service.AuthService
+import org.springframework.http.HttpHeaders
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompCommand
@@ -18,7 +19,8 @@ class AuthChannelInterceptorAdaptor(
     val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java)
 
     if (accessor != null && StompCommand.CONNECT == accessor.command) {
-      val authorizationHeader = accessor.getNativeHeader("Authorization") ?: return null
+      val authorizationHeader = accessor.getNativeHeader(HttpHeaders.AUTHORIZATION)
+        ?: throw RuntimeException("${HttpHeaders.AUTHORIZATION} header is not exist")
 
       authorizationHeader[0]?.let { token ->
         accessor.user = authService.getUsernamePasswordAuthenticationToken(token)

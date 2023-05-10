@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.http.HttpHeaders
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
 import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaders
@@ -146,7 +147,7 @@ class ChattingControllerTest(
     val principal = authentication.principal as User
     val token = jwtService.generateAccessToken(principal)
 
-    stompHeaders.add("Authorization", token)
+    stompHeaders.add(HttpHeaders.AUTHORIZATION, token)
     return stompHeaders
   }
 }
