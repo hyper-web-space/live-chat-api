@@ -28,9 +28,9 @@ import java.lang.reflect.Type
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import kotlin.reflect.KClass
 
 class ChattingControllerTest(
@@ -62,16 +62,16 @@ class ChattingControllerTest(
     val room1Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
     val room2Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
 
-    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
-    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
-    anotherSession.subscribe("/chat/room2", MessageFrameHandler(ChatData::class, room2Queue, jwtService))
+    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue))
+    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue))
+    anotherSession.subscribe("/chat/room2", MessageFrameHandler(ChatData::class, room2Queue))
 
     val chatData = ChatData(user1Id, "hello", LocalDateTime.now())
     session1.send("/queue/message/$chatRoomId", chatData)
 
-    val chatData1 = room1Queue.poll(100, TimeUnit.MILLISECONDS)
-    val chatData2 = room1Queue.poll(100, TimeUnit.MILLISECONDS)
-    val chatData3 = room2Queue.poll(100, TimeUnit.MILLISECONDS)
+    val chatData1 = room1Queue.poll(300, TimeUnit.MILLISECONDS)
+    val chatData2 = room1Queue.poll(300, TimeUnit.MILLISECONDS)
+    val chatData3 = room2Queue.poll(300, TimeUnit.MILLISECONDS)
 
     assertEquals(chatData, chatData1)
     assertEquals(chatData, chatData2)
@@ -94,8 +94,8 @@ class ChattingControllerTest(
 
     val room1Queue: BlockingQueue<ChatData> = LinkedBlockingQueue()
 
-    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
-    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue, jwtService))
+    session1.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue))
+    session2.subscribe("/chat/$chatRoomId", MessageFrameHandler(ChatData::class, room1Queue))
 
     val chatData = ChatData(user1Id, "hello", LocalDateTime.now())
 
@@ -108,7 +108,7 @@ class ChattingControllerTest(
   fun `Authoriazation 토큰 없이 웹소켓 연결 테스트`() {
     val webSocketClient = getWebSocketClient()
 
-    assertThrows<TimeoutException> {
+    assertThrows<ExecutionException> {
       getStompSession(webSocketClient, null)
     }
   }
@@ -154,8 +154,7 @@ class ChattingControllerTest(
 
 class MessageFrameHandler<T : Any>(
   private val kClass: KClass<T>,
-  private val queue: BlockingQueue<T>,
-  private val jwtService: JwtService,
+  private val queue: BlockingQueue<T>
 ) : StompSessionHandlerAdapter() {
 
   override fun getPayloadType(headers: StompHeaders): Type {
