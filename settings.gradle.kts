@@ -1,1 +1,1 @@
-rootProject.name = "live-chat-api"
+include(":live-chat-api")

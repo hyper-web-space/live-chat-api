@@ -1,5 +1,5 @@
 FROM openjdk:17-jdk-slim AS builder
-COPY ./ /tmp
+COPY .. /tmp
 WORKDIR /tmp
 RUN ./gradlew clean bootJar
 
