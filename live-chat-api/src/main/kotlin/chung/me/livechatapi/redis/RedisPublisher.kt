@@ -1,6 +1,7 @@
 package chung.me.livechatapi.redis
 
-import chung.me.livechatapi.controller.ChatData
+import chung.me.livechatmessage.dto.ChatData
+import chung.me.livechatmessage.redis.RedisChatMessage
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 

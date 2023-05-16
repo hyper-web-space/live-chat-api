@@ -1,4 +1,4 @@
-package chung.me.livechatapi.entity
+package chung.me.livechatmessage.entity
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.CreatedDate

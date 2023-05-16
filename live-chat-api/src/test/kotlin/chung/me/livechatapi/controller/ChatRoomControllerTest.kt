@@ -2,7 +2,6 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.SpringMvcMockTestSupport
 import chung.me.livechatapi.entity.ChatRoom
-import chung.me.livechatapi.entity.Message
 import chung.me.livechatapi.repos.ChatRoomRepos
 import chung.me.livechatapi.repos.MessageRepos
 import org.assertj.core.api.Assertions.assertThat

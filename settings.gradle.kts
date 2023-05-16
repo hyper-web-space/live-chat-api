@@ -1,5 +1,6 @@
 include("live-chat-api")
 include("live-chat-saver")
+include("live-chat-message")
 
 pluginManagement {
 

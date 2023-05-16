@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+  implementation(project(":live-chat-message"))
   implementation("org.springframework.boot:spring-boot-starter-parent:3.0.5")
   implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")

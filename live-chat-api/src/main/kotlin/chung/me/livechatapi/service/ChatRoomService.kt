@@ -1,12 +1,12 @@
 package chung.me.livechatapi.service
 
-import chung.me.livechatapi.controller.ChatData
 import chung.me.livechatapi.controller.ChatRoomPageResponse
 import chung.me.livechatapi.controller.ChatRoomResponse
 import chung.me.livechatapi.controller.CreationChatRoomResponse
 import chung.me.livechatapi.entity.ChatRoom
 import chung.me.livechatapi.repos.ChatRoomRepos
 import chung.me.livechatapi.repos.MessageRepos
+import chung.me.livechatmessage.dto.ChatData
 import org.bson.types.ObjectId
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort

@@ -1,6 +1,6 @@
-package chung.me.livechatapi.redis
+package chung.me.livechatmessage.redis
 
-import chung.me.livechatapi.controller.ChatData
+import chung.me.livechatmessage.dto.ChatData
 import java.io.Serializable
 import java.time.LocalDateTime
 

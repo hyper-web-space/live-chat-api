@@ -2,6 +2,7 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.service.ChatRoomService
 import chung.me.livechatapi.service.ChattingService
+import chung.me.livechatmessage.dto.ChatData
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping
