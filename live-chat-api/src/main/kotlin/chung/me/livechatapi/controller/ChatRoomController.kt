@@ -2,8 +2,8 @@ package chung.me.livechatapi.controller
 
 import chung.me.livechatapi.config.USER_ID
 import chung.me.livechatapi.entity.ChatRoom
-import chung.me.livechatapi.entity.Message
 import chung.me.livechatapi.service.ChatRoomService
+import chung.me.livechatmessage.dto.ChatData
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -203,15 +203,3 @@ data class ChatRoomResponse(
 data class JoinChatRoomBody(
   val password: String? = null,
 )
-
-data class ChatData(
-  val sender: String,
-  val contents: String,
-  val messageTimestamp: LocalDateTime,
-) {
-  companion object {
-    fun fromMessage(message: Message): ChatData {
-      return ChatData(message.sender, message.content, message.createdAt)
-    }
-  }
-}

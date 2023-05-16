@@ -1,9 +1,9 @@
 package chung.me.livechatapi.service
 
-import chung.me.livechatapi.controller.ChatData
-import chung.me.livechatapi.entity.Message
 import chung.me.livechatapi.redis.RedisPublisher
 import chung.me.livechatapi.repos.MessageRepos
+import chung.me.livechatmessage.dto.ChatData
+import chung.me.livechatmessage.entity.Message
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

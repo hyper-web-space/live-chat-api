@@ -1,6 +1,5 @@
 package chung.me.livechatapi.repos
 
-import chung.me.livechatapi.entity.Message
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
