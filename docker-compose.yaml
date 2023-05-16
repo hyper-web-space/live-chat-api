@@ -1,18 +1,18 @@
 version: "3.9"
 
 services:
-  api:
-    image: ghcr.io/hyper-web-space/live-chat-api:latest
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      MONGODB_HOST: mongo
-      MONGODB_USERNAME: root
-      MONGODB_PASSWORD: root
-    depends_on:
-      - mongo
-      - redis
+#  api:
+#    image: ghcr.io/hyper-web-space/live-chat-api:latest
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      MONGODB_HOST: mongo
+#      MONGODB_USERNAME: root
+#      MONGODB_PASSWORD: root
+#    depends_on:
+#      - mongo
+#      - redis
   mongo:
     image: mongo
     restart: always
