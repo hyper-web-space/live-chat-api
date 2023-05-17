@@ -4,6 +4,8 @@ import chung.me.livechatapi.SpringMvcMockTestSupport
 import chung.me.livechatapi.entity.ChatRoom
 import chung.me.livechatapi.repos.ChatRoomRepos
 import chung.me.livechatapi.repos.MessageRepos
+import chung.me.livechatmessage.dto.ChatData
+import chung.me.livechatmessage.entity.Message
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Assertions.assertAll

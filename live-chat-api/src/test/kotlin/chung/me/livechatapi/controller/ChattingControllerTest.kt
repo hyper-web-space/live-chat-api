@@ -6,6 +6,7 @@ import chung.me.livechatapi.entity.ChatRoom
 import chung.me.livechatapi.entity.User
 import chung.me.livechatapi.repos.ChatRoomRepos
 import chung.me.livechatapi.repos.UserRepos
+import chung.me.livechatmessage.dto.ChatData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
