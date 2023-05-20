@@ -4,7 +4,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: live-chat-saver
+  IMAGE_NAME: ghcr.io/hyper-web-space/live-chat-saver
 
 on:
   push:
