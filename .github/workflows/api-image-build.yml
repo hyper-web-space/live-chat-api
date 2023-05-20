@@ -24,14 +24,12 @@ jobs:
           java-version: '17'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Test with Gradle
-        run: ./gradlew :live-chat-api:test
       - name: generate jacoco report
-        run: ./gradlew :live-chat-api:jacocoTestReport
+        run: ./gradlew testCodeCoverageReport
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./live-chat-api/build/reports/jacoco/test/jacocoTestReport.xml
+          file: ./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           fail_ci_if_error: true
   build:
     runs-on: ubuntu-latest
@@ -69,9 +67,9 @@ jobs:
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v4
-        working-directory: ./live-chat-api
         with:
           context: .
+          file: ./live-chat-api/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }},ghcr.io/hyper-web-space/live-chat-api:latest
           labels: ${{ steps.meta.outputs.labels }}
