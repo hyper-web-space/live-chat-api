@@ -79,7 +79,7 @@ class ChatRoomService(
 
     val pageable = PageRequest.of(0, DEFAULT_CHAT_COUNT, Sort.by("createdAt").descending())
     return messageRepos.findByRoomId(ObjectId(chatRoomId), pageable).map {
-      ChatData.fromMessage(it)
+      ChatData.of(it)
     }
   }
 

@@ -31,9 +31,6 @@ class ChattingController(
       return
     }
 
-    chattingService.saveAndPublish(roomId, chatData)
-
-    logger().debug("send message to /chat/$roomId")
-    simpleMessageSendingOperations.convertAndSend("/chat/$roomId", chatData)
+    chattingService.publishMessageToRedis(roomId, chatData)
   }
 }

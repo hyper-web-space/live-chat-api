@@ -23,6 +23,7 @@ repositories {
 }
 
 dependencies {
+  implementation(project(":live-chat-message"))
   implementation("org.springframework.boot:spring-boot-starter-parent:3.0.5")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -31,6 +32,7 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   implementation("io.projectreactor.netty:reactor-netty-http")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
