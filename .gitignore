@@ -38,3 +38,5 @@ out/
 
 mongo-data/
 /output/
+
+docs/resources/.DS_Store
