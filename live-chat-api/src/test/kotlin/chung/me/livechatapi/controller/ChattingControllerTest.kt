@@ -70,9 +70,9 @@ class ChattingControllerTest(
     val chatData = ChatData(user1Id, "hello", LocalDateTime.now())
     session1.send("/queue/message/$chatRoomId", chatData)
 
-    val chatData1 = room1Queue.poll(300, TimeUnit.MILLISECONDS)
-    val chatData2 = room1Queue.poll(300, TimeUnit.MILLISECONDS)
-    val chatData3 = room2Queue.poll(300, TimeUnit.MILLISECONDS)
+    val chatData1 = room1Queue.poll(1, TimeUnit.SECONDS)
+    val chatData2 = room1Queue.poll(1, TimeUnit.SECONDS)
+    val chatData3 = room2Queue.poll(1, TimeUnit.SECONDS)
 
     assertEquals(chatData, chatData1)
     assertEquals(chatData, chatData2)

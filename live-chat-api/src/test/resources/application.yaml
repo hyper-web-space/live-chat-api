@@ -15,3 +15,5 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
+    chung:
+      me: DEBUG

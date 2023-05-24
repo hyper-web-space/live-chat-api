@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 data class ChatData(
   val sender: String,
   val contents: String,
-  @get:JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+  @get:JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSS")
   val messageTimestamp: LocalDateTime,
 ) {
   companion object {

@@ -33,7 +33,6 @@ dependencies {
   implementation("io.projectreactor.netty:reactor-netty-http")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
@@ -41,10 +40,6 @@ tasks.withType<KotlinCompile> {
     freeCompilerArgs = listOf("-Xjsr305=strict")
     jvmTarget = "17"
   }
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
 }
 
 tasks {

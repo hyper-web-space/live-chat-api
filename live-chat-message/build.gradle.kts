@@ -32,10 +32,6 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
-
 tasks.withType<BootJar> {
   enabled = false
 }

@@ -27,7 +27,7 @@ class ChattingController(
   ) {
 
     if (chatRoomService.isRoomClosed(roomId)) {
-      logger().debug("chat room is closed. [$roomId]")
+      logger().info("chat room is closed. [$roomId]")
       return
     }
 
