@@ -13,7 +13,7 @@ Redis와 WebSocket을 이용한 라이브 채팅 API
 # 명세
 ## API 명세
 
-서버 실행 후 http://localhost:8080/swagger-ui.html 에서 확인 가능합니다.
+서버 실행 후 http://localhost:8080/swagger-ui/index.html#/ 에서 확인 가능합니다.
 
 ## WebSocket 명세
 
