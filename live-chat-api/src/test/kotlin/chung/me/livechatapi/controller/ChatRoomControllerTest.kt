@@ -8,8 +8,7 @@ import chung.me.livechatmessage.dto.ChatData
 import chung.me.livechatmessage.entity.Message
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
-import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -259,5 +258,37 @@ class ChatRoomControllerTest(
     val code = HttpStatus.BAD_REQUEST.toString()
     assertThat(errorResponse)
       .isEqualTo(ResponseErrorEntity(code, "Chat room not found"))
+  }
+
+  @WithMockUser(username = "user1", roles = ["MEMBER"])
+  @Test
+  fun `잠긴 채팅방 입장 테스트`() {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user1", null))
+    chatRoom.participants.addAll(listOf("user2", "user3"))
+    chatRoom.participants.remove("user1")
+    chatRoomRepos.save(chatRoom)
+
+    val response = performPost("/chatrooms/${chatRoom.id}", JoinChatRoomBody()).andReturn().response
+    assertEquals(response.status, 403)
+    val errorResponse = toResult<ResponseErrorEntity>(response)
+    val code = HttpStatus.FORBIDDEN.toString()
+    assertThat(errorResponse)
+      .isEqualTo(ResponseErrorEntity(code, "Creator has left the room, Chat room is closed."))
+  }
+
+  @WithMockUser(username = "user1", roles = ["MEMBER"])
+  @Test
+  fun `채팅방 나가기 테스트`() {
+    val chatRoom = chatRoomRepos.save(ChatRoom("room1", "user2", null))
+    chatRoom.participants.addAll(listOf("user1", "user2", "user3"))
+    chatRoomRepos.save(chatRoom)
+    val roomId = chatRoom.id
+    val response = performPut("/chatrooms/$roomId").andReturn().response
+    assertEquals(response.status, 200)
+    val exitChatRoomResponse = toResult<Boolean>(response)
+    assertTrue(exitChatRoomResponse)
+    val participants = chatRoomRepos.findById(roomId).get().participants
+    assertThat(participants)
+      .containsExactlyInAnyOrder("user2", "user3")
   }
 }

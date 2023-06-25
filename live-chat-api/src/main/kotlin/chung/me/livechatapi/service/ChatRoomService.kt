@@ -74,6 +74,10 @@ class ChatRoomService(
       throw ResponseStatusException(HttpStatusCode.valueOf(400), "Already joined")
     }
 
+    if (!chatRoom.participants.contains(chatRoom.creator)) {
+      throw ResponseStatusException(HttpStatusCode.valueOf(403), "Creator has left the room, Chat room is closed.")
+    }
+
     chatRoom.participants.add(userId)
     repos.save(chatRoom)
 
@@ -88,5 +92,21 @@ class ChatRoomService(
     val creator = repos.findCreatorById(objectId)?.creator
     checkNotNull(creator)
     return repos.isRoomClosed(objectId, creator)
+  }
+
+  @OptIn(ExperimentalStdlibApi::class)
+  fun exitChatRoom(chatRoomId: String, userId: String): Boolean {
+    val chatRoom = repos.findById(ObjectId(chatRoomId))
+      .getOrElse { throw ResponseStatusException(HttpStatusCode.valueOf(400), "Chat room not found") }
+
+    if (!chatRoom.participants.contains(userId)) {
+      throw ResponseStatusException(HttpStatusCode.valueOf(400), "Not joined")
+    }
+
+    return chatRoom.participants.remove(userId).also {
+      if (it) {
+        repos.save(chatRoom)
+      }
+    }
   }
 }

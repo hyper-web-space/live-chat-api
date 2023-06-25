@@ -140,6 +140,16 @@ class ChatRoomController(
           )
         ]
       ),
+      ApiResponse(
+        responseCode = "403",
+        description = "채팅방 주인이 나가서 입장할 수 없음",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
     ],
     description = "채팅방 입장"
   )
@@ -151,6 +161,43 @@ class ChatRoomController(
   ): ResponseEntity<List<ChatData>> {
     val (password) = body
     return ResponseEntity.ok(service.joinChatRoom(chatRoomId, password, userId))
+  }
+
+  @Operation(
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "채팅방 나가기 성공",
+      ),
+      ApiResponse(
+        responseCode = "400",
+        description = "채팅방이 존재하지 않음",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
+      ApiResponse(
+        responseCode = "401",
+        description = "AUTHORIZATION 헤더가 없거나, 유효하지 않은 토큰",
+        content = [
+          Content(
+            schema = Schema(implementation = ResponseErrorEntity::class),
+            mediaType = "application/json"
+          )
+        ]
+      ),
+    ],
+    description = "채팅방 나가기"
+  )
+  @PutMapping("{chatRoomId}")
+  fun exitChatRoom(
+    @RequestHeader(USER_ID) userId: String,
+    @PathVariable chatRoomId: String,
+  ): ResponseEntity<Boolean> {
+    return ResponseEntity.ok(service.exitChatRoom(chatRoomId, userId))
   }
 }
 
